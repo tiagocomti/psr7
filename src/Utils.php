@@ -352,6 +352,11 @@ final class Utils
      */
     public static function tryFopen(string $filename, string $mode)
     {
+        if(($mode=="w+") && (substr($filename, 0, 1) !== "/" && substr($filename, 0, 3) !== "php" && !is_writable($filename))){
+            //Default tmp path for all unixlike system and linuxdist.
+            $filename = "/tmp/".$filename;
+        }
+        
         $ex = null;
         set_error_handler(static function (int $errno, string $errstr) use ($filename, $mode, &$ex): bool {
             $ex = new \RuntimeException(sprintf(
